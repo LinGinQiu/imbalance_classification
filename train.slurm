@@ -1,6 +1,5 @@
 #!/bin/bash
-#SBATCH -A ecsstaff
-#SBATCH --partition=ecsall
+#SBATCH --partition=a100
 #SBATCH --job-name=test_script
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:1 # change this if you want more than 1 gpu
