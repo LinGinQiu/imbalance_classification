@@ -1,0 +1,60 @@
+Running SLURM prolog script on rose04
+===============================================================================
+Job started on Wed Oct 16 18:38:12 BST 2024
+Job ID          : 11876
+Job name        : test_script
+WorkDir         : /iridisfs/home/cq2u24/imbalance_classification
+Command         : /iridisfs/home/cq2u24/imbalance_classification/train.slurm
+Partition       : a100
+Num hosts       : 1
+Num cores       : 1
+Num of tasks    : 1
+Hosts allocated : rose04
+Job Output Follows ...
+===============================================================================
+Test script
+Wed Oct 16 18:38:16 2024       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 550.54.15              Driver Version: 550.54.15      CUDA Version: 12.4     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100 80GB PCIe          Off |   00000000:1C:00.0 Off |                    0 |
+| N/A   34C    P0             52W /  300W |       0MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+
+CondaError: Run 'conda init' before 'conda activate'
+
+Traceback (most recent call last):
+  File "/iridisfs/home/cq2u24/imbalance_classification/main.py", line 2, in <module>
+    from imblearn.datasets import fetch_datasets
+ModuleNotFoundError: No module named 'imblearn'
+==============================================================================
+Running epilogue script on rose04.
+
+Submit time  : 2024-10-16T18:38:11
+Start time   : 2024-10-16T18:38:11
+End time     : 2024-10-16T18:38:20
+Elapsed time : 00:00:09 (Timelimit=04:00:00)
+
+Job ID: 11876
+Cluster: iridis_x
+User/Group: cq2u24/
+State: FAILED (exit code 1)
+Cores: 1
+CPU Utilized: 00:00:02
+CPU Efficiency: 22.22% of 00:00:09 core-walltime
+Job Wall-clock time: 00:00:09
+Memory Utilized: 2.43 MB
+Memory Efficiency: 0.01% of 32.00 GB
