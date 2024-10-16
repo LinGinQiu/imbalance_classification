@@ -14,7 +14,7 @@ config = Config()
 'BorderlineSMOTE', 'SVMSMOTE', 'SMOTENC', 'SMOTEN'"""
 
 # Configure logging to write to a file
-logging.basicConfig(filename='model_evaluation.log', level=logging.INFO,
+logging.basicConfig(filename='./log/model_evaluation.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 # Load a dataset
 datasetslist = list(fetch_datasets().items())
@@ -114,6 +114,6 @@ for dataname, data_dict in datasetslist:
     plt.title(f'Mean Receiver Operating Characteristic (ROC) Curve in {dataname}')
     plt.legend(loc='lower right')
     plt.grid()
-    plt.savefig(f'{dataname}_roc_curve.png', dpi=300)
+    plt.savefig(f'./img/{dataname}_roc_curve.png', dpi=300)
     plt.show()
 
