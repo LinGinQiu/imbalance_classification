@@ -6,6 +6,7 @@
 #SBATCH --gres=gpu:1 # change this if you want more than 1 gpu
 #SBATCH --mem=32G
 #SBATCH --time=4:00:00
+#SBATCH --mail-user=cq2u24@soton.ac.uk
 
 echo Test script 
 nvidia-smi
