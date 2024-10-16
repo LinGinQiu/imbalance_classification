@@ -7,30 +7,12 @@
 #SBATCH --time=4:00:00
 #SBATCH --mail-user=cq2u24@soton.ac.uk
 
-echo Test script 
-nvidia-smi
-
-module load conda/py3-latest
-
-# >>> conda initialize >>>
-# !! Contents witdhin this block are managed by 'conda init' !!
-__conda_setup="$('/local/software/conda/miniconda-py3-new/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/local/software/conda/miniconda-py3-new/etc/profile.d/conda.sh" ]; then
-        . "/local/software/conda/miniconda-py3-new/etc/profile.d/conda.sh"
-    else
-        export PATH="/local/software/conda/miniconda-py3-new/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+module purge
+eval "$(conda shell.bash hook)"
+module load conda
 
 conda activate imb
 
 python main.py
 
-nvidia-smi
-echo Test script completed =3
 
