@@ -2,6 +2,7 @@ from collections import Counter
 from imblearn.datasets import fetch_datasets
 from sklearn.model_selection import StratifiedKFold
 from config import Config
+import logging
 from utils import *
 import time
 from numpy import interp
@@ -12,7 +13,9 @@ config = Config()
 """over-sampling methods include 'ADASYN', 'RandomOverSampler', 'KMeansSMOTE', 'SMOTE', 
 'BorderlineSMOTE', 'SVMSMOTE', 'SMOTENC', 'SMOTEN'"""
 
-
+# Configure logging to write to a file
+logging.basicConfig(filename='model_evaluation.log', level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 # Load a dataset
 datasetslist = list(fetch_datasets().items())
 for dataname, data_dict in datasetslist:
@@ -23,8 +26,11 @@ for dataname, data_dict in datasetslist:
 
     for oversampler_name in ['ros', 'rose', 'adasyn', 'smote']:
         start_time = time.time()
-        print(f"Using {oversampler_name} over-sampling method")
-        print("-" * 50)
+        # print(f"Using {oversampler_name} over-sampling method")
+        # print("-" * 50)
+        logging.info(f"Using {oversampler_name} over-sampling method")
+        logging.info("-" * 50)
+
         # Split the data using StratifiedKFold
         skf = StratifiedKFold(n_splits=10, random_state=config.seed, shuffle=True)
 
@@ -83,13 +89,21 @@ for dataname, data_dict in datasetslist:
         plt.plot(mean_fpr, mean_tpr, label=f'{oversampler_name} ROC curve (AUC = {avg_roc_auc:.2f})')
         # verbose
         end_time = time.time()
-        print(f"Time taken of {oversampler_name}: {end_time - start_time:.2f} seconds")
-        print(f'Average Accuracy of {oversampler_name}: {avg_accuracy:.4f}')
-        print(f'Average Precision of {oversampler_name}: {avg_precision:.4f}')
-        print(f'Average Recall of {oversampler_name}: {avg_recall:.4f}')
-        print(f'Average F1 Score of {oversampler_name}: {avg_f1:.4f}')
-        print(f'Average ROC AUC of {oversampler_name}: {avg_roc_auc:.4f}')
-        print("*" * 50)
+        # print(f"Time taken of {oversampler_name}: {end_time - start_time:.2f} seconds")
+        # print(f'Average Accuracy of {oversampler_name}: {avg_accuracy:.4f}')
+        # print(f'Average Precision of {oversampler_name}: {avg_precision:.4f}')
+        # print(f'Average Recall of {oversampler_name}: {avg_recall:.4f}')
+        # print(f'Average F1 Score of {oversampler_name}: {avg_f1:.4f}')
+        # print(f'Average ROC AUC of {oversampler_name}: {avg_roc_auc:.4f}')
+        # print("*" * 50)
+        # Log the average metrics
+        logging.info(f'Average Accuracy: {avg_accuracy:.4f}')
+        logging.info(f'Average Precision: {avg_precision:.4f}')
+        logging.info(f'Average Recall: {avg_recall:.4f}')
+        logging.info(f'Average F1 Score: {avg_f1:.4f}')
+        logging.info(f'Average ROC AUC: {avg_roc_auc:.4f}')
+        logging.info(f'Time taken: {end_time - start_time:.2f} seconds')
+        logging.info("*" * 50)
 
 
     plt.plot([0, 1], [0, 1], color='red', linestyle='--')  # Random classifier line
