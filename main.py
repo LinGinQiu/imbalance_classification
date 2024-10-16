@@ -99,6 +99,7 @@ for dataname, data_dict in datasetslist:
     plt.ylabel('True Positive Rate')
     plt.title(f'Mean Receiver Operating Characteristic (ROC) Curve in {dataname}')
     plt.legend(loc='lower right')
-    plt.grid()                                                    
+    plt.grid()
+    plt.savefig(f'{dataname}_roc_curve.png', dpi=300)
     plt.show()
 
