@@ -3,6 +3,8 @@ import seaborn as sns
 import numpy as np
 from imblearn.over_sampling import *
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc
+from aeon.classification.interval_based import TimeSeriesForestClassifier
+from sklearn.linear_model import LogisticRegression
 
 sns.set_context("paper")
 from config import Config
@@ -80,3 +82,19 @@ class OverSamplingMethods:
 
     def smote(self):
         return SMOTE(random_state=self.config.seed, k_neighbors=5, )
+
+
+class ClassificationMetrics:
+    """
+    over-sampling methods include 'ADASYN', 'RandomOverSampler', 'KMeansSMOTE', 'SMOTE',
+    'BorderlineSMOTE', 'SVMSMOTE', 'SMOTENC', 'SMOTEN'
+    """
+
+    def __init__(self):
+        self.config = Config()
+
+    def tsf_classifier(self):
+        return TimeSeriesForestClassifier(n_estimators=50, random_state=self.config.seed)
+
+    def logistic_regression(self):
+        return LogisticRegression(random_state=self.config.seed)
