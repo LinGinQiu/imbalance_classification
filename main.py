@@ -14,7 +14,7 @@ import argparse
 
 # Configure logging to write to a file
 parser = argparse.ArgumentParser(description="Process some integers.")
-parser.add_argument("--debug", type=str, help="if debug mode", default=True)
+parser.add_argument("--debug", type=str, help="if debug mode", default=False)
 
 args = parser.parse_args()
 config = Config()
