@@ -1,7 +1,7 @@
 import os
 
 import numpy as np
-
+import pandas as pd
 import data_struc
 from config import Config
 import logging
@@ -14,12 +14,20 @@ import argparse
 
 # Configure logging to write to a file
 parser = argparse.ArgumentParser(description="Process some integers.")
-parser.add_argument("--debug", type=str, help="if debug mode", default=False)
+parser.add_argument("--debug", type=str, help="if debug mode", default=True)
 
 args = parser.parse_args()
-config = Config()
+config = Config(args.debug)
 
-data_path = config.data_debug_path if args.debug == True else config.data_path
+
+# add CSV path
+results_csv_path = config.results_csv_path
+
+# check if the file exists
+if not os.path.exists(results_csv_path):
+    # if not, create a new file
+    df = pd.DataFrame(columns=['Dataset', 'Oversampler', 'Classifier', 'Accuracy', 'Precision', 'Recall', 'F1 Score', 'ROC AUC', 'Time Taken'])
+    df.to_csv(results_csv_path, index=False)
 
 if __name__ == "__main__":
     np.random.seed(config.seed)
@@ -27,15 +35,21 @@ if __name__ == "__main__":
     logging.basicConfig(filename=config.log_path, level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
-    datasets_list = os.listdir(data_path)
-    datasets_list = [x for x in datasets_list if not x.endswith('.csv') and not x.startswith('.')]
+    with open(os.path.join(config.root_path, config.datasets_list), mode='r', encoding='utf-8') as txt_file:
+        datasets_list = [line.strip() for line in txt_file]
 
-    for data_name in datasets_list:
+    for i,data_name in enumerate(datasets_list):
+        if  i < 104:
+            print(f"Skipping {data_name}")
+            continue
         logging.info(f"Processing {data_name}")
 
-        data, target, meta_data = load_from_tsfile(os.path.join(data_path, data_name, f"{data_name}.ts"),
-                                                   return_meta_data=True)
-        target = target.astype(int)
+        data_path = os.path.join(config.root_path, config.data_path, data_name)
+
+        X_train, y_train = load_from_tsfile(os.path.join(data_path, f"{data_name}_TRAIN.ts"))
+        X_test, y_test = load_from_tsfile(os.path.join(data_path, f"{data_name}_TEST.ts"))
+
+        y_train, y_test = y_train.astype(int), y_test.astype(int)
         # Plot the mean ROC curve
         plt.figure(figsize=(10, 6))
 
@@ -44,7 +58,7 @@ if __name__ == "__main__":
             logging.info(f"Using {oversampler_name} over-sampling method")
             logging.info("-" * 50)
 
-            seeds = np.random.randint(0, 10000, 10)
+            seeds = np.random.randint(0, 10000, config.Kfold)
 
             # Initialize lists to store metrics
             accuracy_scores = []
@@ -57,8 +71,8 @@ if __name__ == "__main__":
             mean_fpr = np.linspace(0, 1, 100)
 
             for fold, seed in enumerate(seeds):
-                X_train, X_test, y_train, y_test = data_struc.split_data(data, target, data_name, seed,
-                                                                         data_path=data_path)
+                if len(seeds) > 1:
+                    X_train, X_test, y_train, y_test = data_struc.shuffle_data(X_train, X_test, y_train, y_test, seed)
 
                 X_train_imb, y_train_imb, minority_num = data_struc.make_imbalance(
                     X_train, y_train, sampling_ratio=config.imbalance_ratio, minority_num=True)
@@ -67,13 +81,14 @@ if __name__ == "__main__":
                 logging.info(f"Training set distribution: {np.unique(y_train_imb, return_counts=True)}")
                 logging.info(f"Test set distribution: {np.unique(y_test, return_counts=True)}\n")
                 logging.info(f"Minority class number: {minority_num}")
-                if minority_num <= 6:
-                    logging.info(f"Minority class number less than 6, skipping this fold")
-                    continue
+                # if minority_num <= 6:
+                #     logging.info(f"Minority class number less than 6, skipping this fold")
+                #     continue
 
                 oversampler = getattr(OverSamplingMethods(), oversampler_name)()
                 X_sampled, y_sampled = oversampler.fit_resample(np.squeeze(X_train_imb), y_train_imb)
                 X_sampled = np.expand_dims(X_sampled, axis=1)
+
                 clf = getattr(ClassificationMetrics(), config.classifier)()
                 clf.fit(X_sampled, y_sampled)
                 y_pred = clf.predict(X_test)
@@ -112,13 +127,32 @@ if __name__ == "__main__":
             plt.plot(mean_fpr, mean_tpr, label=f'{oversampler_name} ROC curve (AUC = {avg_roc_auc:.2f})')
             # verbose
             end_time = time.time()
+            time_taken = end_time - start_time
+
+            result_row = {
+                'Dataset': data_name,
+                'Oversampler': oversampler_name,
+                'Classifier': config.classifier,
+                'Accuracy': avg_accuracy,
+                'Precision': avg_precision,
+                'Recall': avg_recall,
+                'F1 Score': avg_f1,
+                'ROC AUC': avg_roc_auc,
+                'Time Taken': time_taken
+            }
+
+            df = pd.DataFrame([result_row])
+            df.to_csv(results_csv_path, mode='a', header=False, index=False)
+
             logging.info(f'Average Accuracy: {avg_accuracy:.4f}')
             logging.info(f'Average Precision: {avg_precision:.4f}')
             logging.info(f'Average Recall: {avg_recall:.4f}')
             logging.info(f'Average F1 Score: {avg_f1:.4f}')
             logging.info(f'Average ROC AUC: {avg_roc_auc:.4f}')
-            logging.info(f'Time taken: {end_time - start_time:.2f} seconds')
+            logging.info(f'Time taken: {time_taken:.2f} seconds')
             logging.info("*" * 50)
+
+
 
         plt.plot([0, 1], [0, 1], color='red', linestyle='--')  # Random classifier line
         plt.xlim([0.0, 1.0])
@@ -128,5 +162,5 @@ if __name__ == "__main__":
         plt.title(f'Mean Receiver Operating Characteristic (ROC) Curve in {data_name}')
         plt.legend(loc='lower right')
         plt.grid()
-        plt.savefig(f'./img/{data_name}_roc_curve.png', dpi=300)
+        plt.savefig(f'{config.img_path}/{data_name}_roc_curve.png', dpi=300)
         plt.show()

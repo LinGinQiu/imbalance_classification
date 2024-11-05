@@ -14,7 +14,7 @@ config = Config()
 'BorderlineSMOTE', 'SVMSMOTE', 'SMOTENC', 'SMOTEN'"""
 
 # Configure logging to write to a file
-logging.basicConfig(filename='./log/model_evaluation.log', level=logging.INFO,
+logging.basicConfig(filename='results/log/model_evaluation.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 # Load a dataset
 datasetslist = list(fetch_datasets().items())

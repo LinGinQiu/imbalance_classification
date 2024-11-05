@@ -4,7 +4,11 @@ import numpy as np
 from imblearn.over_sampling import *
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc
 from aeon.classification.interval_based import TimeSeriesForestClassifier
+from aeon.classification.hybrid import HIVECOTEV2
+from aeon.classification.convolution_based import MultiRocketHydraClassifier
+from aeon.classification.sklearn import RotationForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.base import BaseEstimator, TransformerMixin
 
 sns.set_context("paper")
 from config import Config
@@ -62,6 +66,24 @@ def metric_factors(y_true, y_pred, y_pred_proba, positive_class=1, verbose=True)
     return accuracy, precision, recall, f1, roc_auc_value, fpr, tpr
 
 
+class None_sampler:
+    def __init__(self):
+        pass
+
+    def fit_resample(self, X, y):
+        return X, y
+
+
+
+
+class SqueezeTransformer(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self  # 无需拟合，直接返回
+
+    def transform(self, X):
+        return np.squeeze(X)  # 压缩数组中的维度
+
+
 class OverSamplingMethods:
     """
     over-sampling methods include 'ADASYN', 'RandomOverSampler', 'KMeansSMOTE', 'SMOTE',
@@ -70,6 +92,9 @@ class OverSamplingMethods:
 
     def __init__(self):
         self.config = Config()
+
+    def none_sampling(self):
+        return None_sampler()
 
     def ros(self):
         return RandomOverSampler(random_state=self.config.seed)
@@ -81,7 +106,7 @@ class OverSamplingMethods:
         return ADASYN(random_state=self.config.seed, n_neighbors=5)
 
     def smote(self):
-        return SMOTE(random_state=self.config.seed, k_neighbors=5, )
+        return SMOTE(random_state=self.config.seed, k_neighbors=5)
 
 
 class ClassificationMetrics:
@@ -95,6 +120,21 @@ class ClassificationMetrics:
 
     def tsf_classifier(self):
         return TimeSeriesForestClassifier(n_estimators=50, random_state=self.config.seed)
+
+    def hc2(self):
+        return HIVECOTEV2(random_state=self.config.seed)
+
+    def multi_rocket_hydra(self):
+        return MultiRocketHydraClassifier(random_state=self.config.seed)
+
+    def rotation_forest(self):
+        from sklearn.pipeline import Pipeline
+        from sklearn.impute import SimpleImputer
+        pipeline = Pipeline([
+            ('squeeze', SqueezeTransformer()),
+            ('classifier', RotationForestClassifier(random_state=self.config.seed))
+        ])
+        return pipeline
 
     def logistic_regression(self):
         return LogisticRegression(random_state=self.config.seed)

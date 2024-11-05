@@ -11,9 +11,10 @@ secret_config.py
 # 忽略所有 .tmp 和 .bak 结尾的文件
 *.tmp
 *.bak
+*.png
 
 # 忽略特定目录下的所有文件
-log/*
+results/log/*
 
 # 但跟踪指定文件或文件夹
 !important.log    # !可以反转忽略规则
