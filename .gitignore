@@ -1,26 +1,6 @@
-# 忽略某个文件
-secret_config.py
-
-# 忽略某个目录
-#img/
-
-
-# 忽略所有 .log 文件
-*.log
-
-# 忽略所有 .tmp 和 .bak 结尾的文件
-*.tmp
-*.bak
-*.png
-# 忽略特定目录下的所有文件
-results/log/*
-
-# 但跟踪指定文件或文件夹
-!important.log    # !可以反转忽略规则
-
-# 忽略特定文件的某些子文件
-#config/*.json
-
-# 忽略系统文件
-.DS_Store  # macOS
-#Thumbs.db  # Windows
+*.png           # 忽略所有 .png 文件
+results/log/*   # 忽略 results/log 目录下的所有文件
+*.log           # 忽略所有 .log 文件
+*.tmp           # 忽略所有 .tmp 文件
+*.bak           # 忽略所有 .bak 文件
+.DS_Store       # 忽略 macOS 的 .DS_Store 文件
