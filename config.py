@@ -2,12 +2,12 @@ import os.path
 
 
 class Config:
-    def __init__(self, debug=False):
+    def __init__(self, run=False):
         """methods: over-sampling methods include 'ADASYN', 'RandomOverSampler', 'KMeansSMOTE', 'SMOTE',
         'BorderlineSMOTE', 'SVMSMOTE', 'SMOTENC', 'SMOTEN'"""
 
         # 数据相关
-        self.root_path = '/scratch/cq2u24' if not debug else '/Users/qiuchuanhang/PycharmProjects'
+        self.root_path = '/scratch/cq2u24' if run else '/Users/qiuchuanhang/PycharmProjects'
         self.data_path = 'UCRArchive_112_imb'
         self.datasets_list = 'UCRArchive_2018_DataSetLists/classification.txt'
         self.num_workers = 4

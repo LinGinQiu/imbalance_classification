@@ -14,10 +14,10 @@ import argparse
 
 # Configure logging to write to a file
 parser = argparse.ArgumentParser(description="Process some integers.")
-parser.add_argument("--debug", type=str, help="if debug mode", default=True)
+parser.add_argument("--run", action="store_true", help="Choose to run or debug (in local) the script")
 
 args = parser.parse_args()
-config = Config(args.debug)
+config = Config(args.run)
 
 
 # add CSV path
@@ -39,9 +39,6 @@ if __name__ == "__main__":
         datasets_list = [line.strip() for line in txt_file]
 
     for i,data_name in enumerate(datasets_list):
-        if  i < 104:
-            print(f"Skipping {data_name}")
-            continue
         logging.info(f"Processing {data_name}")
 
         data_path = os.path.join(config.root_path, config.data_path, data_name)
@@ -138,6 +135,7 @@ if __name__ == "__main__":
                 'Recall': avg_recall,
                 'F1 Score': avg_f1,
                 'ROC AUC': avg_roc_auc,
+                'test_distribution': np.unique(y_test, return_counts=True),
                 'Time Taken': time_taken
             }
 
