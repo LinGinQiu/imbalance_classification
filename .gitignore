@@ -12,7 +12,6 @@ secret_config.py
 *.tmp
 *.bak
 *.png
-
 # 忽略特定目录下的所有文件
 results/log/*
 
