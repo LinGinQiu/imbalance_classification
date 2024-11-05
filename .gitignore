@@ -1,5 +1,5 @@
 *.png           # 忽略所有 .png 文件
-results/log/*   # 忽略 results/log 目录下的所有文件
+results/*       # 忽略 results/ 目录下的所有文件
 *.log           # 忽略所有 .log 文件
 *.tmp           # 忽略所有 .tmp 文件
 *.bak           # 忽略所有 .bak 文件
