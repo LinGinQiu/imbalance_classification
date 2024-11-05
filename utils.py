@@ -32,8 +32,8 @@ def plot_decision_function(X, y, clf, ax, title=None):
 def metric_factors(y_true, y_pred, y_pred_proba, positive_class=1, verbose=True):
     # 1. Accuracy
     accuracy = accuracy_score(y_true, y_pred)
-    precision = precision_score(y_true, y_pred, pos_label=positive_class)
-    recall = recall_score(y_true, y_pred, pos_label=positive_class)
+    precision = precision_score(y_true, y_pred, pos_label=positive_class, zero_division=0)
+    recall = recall_score(y_true, y_pred, pos_label=positive_class, zero_division=0)
 
     # 2. F1 Score
     f1 = f1_score(y_true, y_pred)

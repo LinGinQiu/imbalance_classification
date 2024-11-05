@@ -29,6 +29,6 @@ unset __conda_setup
 
 conda activate imb
 
-python main.py
+python main.py --run
 
 

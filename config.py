@@ -1,5 +1,5 @@
 import os.path
-
+import pandas as pd
 
 class Config:
     def __init__(self, run=False):
@@ -7,6 +7,7 @@ class Config:
         'BorderlineSMOTE', 'SVMSMOTE', 'SMOTENC', 'SMOTEN'"""
 
         # 数据相关
+
         self.root_path = '/scratch/cq2u24' if run else '/Users/qiuchuanhang/PycharmProjects'
         self.data_path = 'UCRArchive_112_imb'
         self.datasets_list = 'UCRArchive_2018_DataSetLists/classification.txt'
@@ -14,17 +15,32 @@ class Config:
         self.imbalance_ratio = 19
         # 模型相关
         self.oversampling = ['none_sampling', 'ros', 'rose', 'adasyn', 'smote']
-        self.oversampling_methods = ['none_sampling']
-        self.classification_methods = ['tsf_classifier', 'logistic_regression',
+        self.oversampling_methods = self.oversampling
+        self.classification_methods = ['logistic_regression',
                                        'hc2', 'multi_rocket_hydra', 'rotation_forest']
-        self.classifier = 'multi_rocket_hydra'
+        self.classifier = 'rotation_forest'
         # 其他
-        self.seed = 42
+        self.seed = 2024
+        self.Kfold = 10
+        self.results_csv_path = None
+        self.img_path = None
+        self.log_path = None
+        self.check_path()
+
+    def check_path(self):
+        """
+        create path if not exist and acclaim the path (log_path, img_path, results_csv_path)
+        """
         self.log_path = f'results/log/model_UCR_112_data_{self.classifier}.log'
         self.img_path = f'results/img/{self.classifier}'
+        self.results_csv_path = f'results/experiment_results_{self.classifier}.csv'
         if not os.path.exists(self.img_path):
             os.makedirs(self.img_path)
-        self.results_csv_path = f'results/experiment_results_{self.classifier}.csv'
-        self.Kfold = 1
-
+        if not os.path.exists(self.results_csv_path):
+            # if not, create a new file
+            df = pd.DataFrame(
+                columns=['Dataset', 'Oversampler', 'Classifier', 'Accuracy', 'Precision', 'Recall', 'F1 Score',
+                         'ROC AUC', 'test_distribution'
+                         'Time Taken'])
+            df.to_csv(self.results_csv_path, index=False)
 
