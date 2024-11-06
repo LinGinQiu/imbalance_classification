@@ -34,6 +34,9 @@ class Config:
         self.log_path = f'results/log/model_UCR_112_data_{self.classifier}.log'
         self.img_path = f'results/img/{self.classifier}'
         self.results_csv_path = f'results/experiment_results_{self.classifier}.csv'
+        log_dir = os.path.dirname(self.log_path)
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
         if not os.path.exists(self.img_path):
             os.makedirs(self.img_path)
         if not os.path.exists(self.results_csv_path):
