@@ -66,14 +66,17 @@ def main_loop(args, config, classifier):
                 # if minority_num <= 6:
                 #     logging.info(f"Minority class number less than 6, skipping this fold")
                 #     continue
+                oversampler = getattr(OverSamplingMethods(), oversampler_name)()
                 try:
-                    oversampler = getattr(OverSamplingMethods(), oversampler_name)()
+
                     X_sampled, y_sampled = oversampler.fit_resample(np.squeeze(X_train_imb), y_train_imb)
-                    X_sampled = np.expand_dims(X_sampled, axis=1)
                 except ValueError as e:
                     logging.warning(f"Skipping {oversampler_name} for {data_name} due to error: {e}")
                     continue
-
+                except RuntimeError as e:
+                    logging.warning(f"Skipping {oversampler_name} for {data_name} due to error: {e}")
+                    continue
+                X_sampled = np.expand_dims(X_sampled, axis=1)
                 clf = getattr(ClassificationMetrics(), classifier)()
                 clf.fit(X_sampled, y_sampled)
                 y_pred = clf.predict(X_test)

@@ -15,7 +15,7 @@ class Config:
         self.imbalance_ratio = 19
         # 模型相关
         self.oversampling = ['none_sampling', 'ros', 'rose', 'adasyn', 'smote']
-        self.oversampling_methods = self.oversampling
+        self.oversampling_methods = ['adasyn']
         self.classification_methods = ['logistic_regression',
                                        'hc2', 'multi_rocket_hydra', 'rotation_forest']
         self.classifier = 'rotation_forest'
