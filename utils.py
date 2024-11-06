@@ -129,7 +129,6 @@ class ClassificationMetrics:
 
     def rotation_forest(self):
         from sklearn.pipeline import Pipeline
-        from sklearn.impute import SimpleImputer
         pipeline = Pipeline([
             ('squeeze', SqueezeTransformer()),
             ('classifier', RotationForestClassifier(random_state=self.config.seed))
@@ -137,4 +136,9 @@ class ClassificationMetrics:
         return pipeline
 
     def logistic_regression(self):
-        return LogisticRegression(random_state=self.config.seed)
+        from sklearn.pipeline import Pipeline
+        pipeline = Pipeline([
+            ('squeeze', SqueezeTransformer()),
+            ('classifier', LogisticRegression(random_state=self.config.seed))
+        ])
+        return pipeline
