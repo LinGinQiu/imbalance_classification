@@ -16,8 +16,7 @@ class Config:
         # 模型相关
         self.oversampling = ['none_sampling', 'ros', 'rose', 'adasyn', 'smote']
         self.oversampling_methods = ['adasyn']
-        self.classification_methods = ['logistic_regression',
-                                       'hc2', 'multi_rocket_hydra', 'rotation_forest']
+        self.classification_methods = ['hc2', 'multi_rocket_hydra', 'rotation_forest']
         self.classifier = 'rotation_forest'
         # 其他
         self.seed = 2024
